@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String TAG = "Focus";
     // media player instance to playback
     // the media file from the raw folder
     MediaPlayer mediaPlayer;
@@ -37,12 +39,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onAudioFocusChange(int focusChange) {
             if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                Log.d(TAG,"onAudioFocusChange  get  AUDIOFOCUS_GAIN");
                 mediaPlayer.start();
             } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                Log.d(TAG,"onAudioFocusChange  get  AUDIOFOCUS_LOSS_TRANSIENT");
                 mediaPlayer.pause();
                 mediaPlayer.seekTo(0);
+               // audioManager.abandonAudioFocusRequest(focusRequest);
             } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                Log.d(TAG,"onAudioFocusChange  get  AUDIOFOCUS_LOSS_TRANSIENT");
                 mediaPlayer.release();
+            } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) {
+                Log.d(TAG,"onAudioFocusChange  get              } else if (focusChange = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) {\n");
             }
         }
     };
@@ -63,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                 .build();
 
-        // set the playback attributes for the focus requester
-        AudioFocusRequest focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+        // set the playback attributes for the focus requester  AUDIOFOCUS_GAIN
+        final AudioFocusRequest focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
                 .setAudioAttributes(playbackAttributes)
                 .setAcceptsDelayedFocusGain(true)
                 .setOnAudioFocusChangeListener(audioFocusChangeListener)
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         // request the audio focus and
         // store it in the int variable
-        final int audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
+
 
         // register all three buttons
         Button bPlay = findViewById(R.id.playButton);
@@ -81,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         // initiate the media player instance with
         // the media file from the raw folder
-        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.music);
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.dukou);
 
         // handle the PLAY button to play the audio
         bPlay.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
                 // request the audio focus by the Android system
                 // if the system grants the permission
                 // then start playing the audio file
+                Log.d(TAG,"bPlay  click" );
+                final int audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
                 if (audioFocusRequest == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                     mediaPlayer.start();
                 }
@@ -100,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         bPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG,"pause  click" );
                 mediaPlayer.pause();
             }
         });
@@ -108,8 +119,9 @@ public class MainActivity extends AppCompatActivity {
         bStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG,"btop  click" );
                 mediaPlayer.stop();
-
+                audioManager.abandonAudioFocusRequest(focusRequest);
                 try {
                     // if the mediaplayer is stopped then
                     // it should be again prepared for
