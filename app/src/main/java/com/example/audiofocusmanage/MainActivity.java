@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
+            Log.d(TAG, "focusChange " + focusChange);
             if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
                 Log.d(TAG,"onAudioFocusChange  get  AUDIOFOCUS_GAIN");
                 mediaPlayer.start();
@@ -47,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.seekTo(0);
                // audioManager.abandonAudioFocusRequest(focusRequest);
             } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                Log.d(TAG,"onAudioFocusChange  get  AUDIOFOCUS_LOSS_TRANSIENT");
+                Log.d(TAG,"onAudioFocusChange  get  AUDIOFOCUS_LOSS");
                 mediaPlayer.release();
-            } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) {
-                Log.d(TAG,"onAudioFocusChange  get              } else if (focusChange = AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) {\n");
+            } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                Log.d(TAG,"onAudioFocusChange  AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK \n");
+                mediaPlayer.pause();
+                mediaPlayer.seekTo(0);
             }
         }
     };
@@ -72,10 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         // set the playback attributes for the focus requester  AUDIOFOCUS_GAIN
-        final AudioFocusRequest focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+        final AudioFocusRequest focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
                 .setAudioAttributes(playbackAttributes)
                 .setAcceptsDelayedFocusGain(true)
                 .setOnAudioFocusChangeListener(audioFocusChangeListener)
+               // .setWillPauseWhenDucked(true)
                 .build();
 
         // request the audio focus and
