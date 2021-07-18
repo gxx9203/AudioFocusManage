@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
                 Log.d(TAG,"onAudioFocusChange  AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK \n");
                 mediaPlayer.pause();
-                mediaPlayer.seekTo(0);
+               // mediaPlayer.seekTo(0);
             }
         }
     };
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 .setAudioAttributes(playbackAttributes)
                 .setAcceptsDelayedFocusGain(true)
                 .setOnAudioFocusChangeListener(audioFocusChangeListener)
-               // .setWillPauseWhenDucked(true)
+                .setWillPauseWhenDucked(true)
                 .build();
 
         // request the audio focus and
