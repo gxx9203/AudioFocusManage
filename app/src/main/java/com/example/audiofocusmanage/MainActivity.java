@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "focusChange " + focusChange);
             if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
                 Log.d(TAG,"onAudioFocusChange  get  AUDIOFOCUS_GAIN");
+                mediaPlayer.setVolume(1f,1f);
                 mediaPlayer.start();
             } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
                 Log.d(TAG,"onAudioFocusChange  get  AUDIOFOCUS_LOSS_TRANSIENT");
@@ -52,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.release();
             } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
                 Log.d(TAG,"onAudioFocusChange  AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK \n");
-                mediaPlayer.pause();
+                mediaPlayer.setVolume(0.2f,0.2f);
+                //  mediaPlayer.pause();
                // mediaPlayer.seekTo(0);
             }
         }
